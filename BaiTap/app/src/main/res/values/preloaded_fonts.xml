@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/anonymous_pro_bold</item>
+        <item>@font/aref_ruqaa_bold</item>
+        <item>@font/arimo_bold</item>
+        <item>@font/bilbo_swash_caps</item>
+        <item>@font/cookie</item>
+        <item>@font/corben_bold</item>
+        <item>@font/niconne</item>
+    </array>
+</resources>
