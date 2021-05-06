@@ -1,52 +1,98 @@
 package com.example.baitap.activity;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-
 import com.example.baitap.R;
 import com.example.baitap.adapter.AdapterProductSeller;
-import com.example.baitap.model.Cart;
+import com.example.baitap.api.ApiInterface;
+import com.example.baitap.api.RetrofitClient;
+import com.example.baitap.model.ModelCate;
 import com.example.baitap.model.ModelProducts;
+import com.example.baitap.model.Promotion;
 
 import java.util.ArrayList;
+import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     //declare whole variable
     ViewFlipper viewFlipperGirl,viewFlipperBoy;
-    private TextView nameTV,tvShopName,tvTabProducts,tvTabOrders,filterTV;
-    private ImageButton editProfileBtn,addProductBtn,filterProductBtn;
+    private TextView nameTV,tvShopName,tvTabProducts,tvTabOrders;
+    private ImageButton editProfileBtn,addProductBtn;
     private RelativeLayout RLProducts,RLOrders;
-    private EditText SearchProductsEdtText;
-    private RecyclerView productShowRV;
-    private ArrayList<ModelProducts>productList;
-    private AdapterProductSeller adapterProductSeller;
-    public static ArrayList<Cart> cart;
+    RecyclerView productShowRV;
+    AdapterProductSeller adapterProductSeller;
+
+    public static ArrayList<ModelProducts> cart;
+    ApiInterface apiInterface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Reference
         inint();
+
+        apiInterface = RetrofitClient.getRetrofitClient().create(ApiInterface.class);
+        Call<List<ModelProducts>> call = apiInterface.getAllProducts();
+
+       call.enqueue(new Callback<List<ModelProducts>>() {
+           @Override
+           public void onResponse(Call<List<ModelProducts>> call, Response<List<ModelProducts>> response) {
+               List<ModelProducts> productsList = response.body();
+                getAllProducts(productsList);
+           }
+
+           @Override
+           public void onFailure(Call<List<ModelProducts>> call, Throwable t) {
+
+           }
+       });
+
+        Call<List<ModelCate>> callCate = apiInterface.getAllCate();
+        callCate.enqueue(new Callback<List<ModelCate>>() {
+            @Override
+            public void onResponse(Call<List<ModelCate>> call, Response<List<ModelCate>> response) {
+                List<ModelCate> cateList = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<List<ModelCate>> call, Throwable t) {
+
+            }
+        });
+
+        Call<List<Promotion>> callPromo = apiInterface.getAllPromotions();
+        callPromo.enqueue(new Callback<List<Promotion>>() {
+            @Override
+            public void onResponse(Call<List<Promotion>> call, Response<List<Promotion>> response) {
+                List<Promotion> listPromo = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<List<Promotion>> call, Throwable t) {
+
+            }
+        });
+
+
+
         //Adapter for ViewFlipperGirl,ViewFlipperBoy
         viewFlipperGirl.setFlipInterval(3000);
         viewFlipperGirl.setAutoStart(true);
         viewFlipperBoy.setFlipInterval(3000);
         viewFlipperBoy.setAutoStart(true);
-        loadAllProducts();
-        showProductsTab();
-        //ProgressDialog for Login
 
         //add Product
         addProductBtn.setOnClickListener(new View.OnClickListener() {
@@ -58,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
         //Tab Products,Tab Orders
         tvTabProducts.setOnClickListener(new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View v) {
-                                                 //Load Products
-                                                showProductsTab();
-                                             }
-                                         });
+            @Override
+            public void onClick(View v) {
+                //Load Products
+                showProductsTab();
+            }
+        });
         tvTabOrders.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,14 +117,9 @@ public class MainActivity extends AppCompatActivity {
                     //Load Orders
             }
         });
-        filterProductBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Choose Category");
-            }
-        });
     }
+
+
 
     private void inint() {
         nameTV = findViewById(R.id.nameTV);
@@ -91,33 +132,21 @@ public class MainActivity extends AppCompatActivity {
         RLOrders = findViewById(R.id.RLOrders);
         viewFlipperGirl = findViewById(R.id.view_flipper_girl);
         viewFlipperBoy = findViewById(R.id.view_flipper_boy);
-        SearchProductsEdtText = findViewById(R.id.SearchProductsEdtText);
-        filterProductBtn = findViewById(R.id.filterProductBtn);
-        filterTV = findViewById(R.id.filterTV);
         productShowRV = findViewById(R.id.productShowRV);
-        if( cart!=null){
+        if(cart!=null){
 
         }else {
             cart = new ArrayList<>();
         }
     }
-
-    private void loadAllProducts() {
-        productList = new ArrayList<>();
-
-        /* Use database to load data
-        DatabaseReference reference = FirebaseDatabase
-                .getInstance
-                .getReference("User");
-        reference.child(firebaseAuth.getUid()).child("Product")
-                .addValueEventListener(new ValueEventListener()){
-                ....
-        }
-        */
+    private void getAllProducts(List<ModelProducts> productsList){
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        productShowRV.setLayoutManager(layoutManager);
+        adapterProductSeller = new AdapterProductSeller(this,productsList);
+        productShowRV.setAdapter(adapterProductSeller);
+        adapterProductSeller.notifyDataSetChanged();
 
     }
-
-
     private void showProductsTab() {
         RLProducts.setVisibility(View.VISIBLE);
         RLOrders.setVisibility(View.GONE);
@@ -130,11 +159,5 @@ public class MainActivity extends AppCompatActivity {
         RLProducts.setVisibility(View.GONE);
         tvTabOrders.setBackgroundResource(R.drawable.shape_tab_product_order_fill);
         tvTabProducts.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-    }
-
-
-    //Loading info
-    private void loadMyInfo(){
-
     }
 }

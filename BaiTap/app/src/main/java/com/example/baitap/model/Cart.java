@@ -13,13 +13,15 @@ public class Cart {
         this.productQuantity = productQuantity;
     }
 
-    public Cart(int id, String name, int quantity, String image, String price){
+    public Cart(int id, String name, int quantity, String size, String image, String price){
         this.productId = id;
         this.productName = name;
         this.productQuantity = quantity;
         this.productImage = image;
         this.originalPrice = price;
+        this.size = size;
     }
+
 
     public Integer getProductId() {
         return productId;
