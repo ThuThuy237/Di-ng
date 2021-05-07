@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.JsonWriter;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,7 +16,23 @@ import android.widget.Toast;
 
 import com.example.baitap.R;
 import com.example.baitap.adapter.CartAdapter;
+import com.example.baitap.api.ApiInterface;
+import com.example.baitap.api.RetrofitClient;
+import com.example.baitap.model.Mess;
 import com.example.baitap.model.ModelProducts;
+import com.example.baitap.model.ModelReceipt;
+import com.example.baitap.model.ModelReciptDetail;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartActivity extends AppCompatActivity {
     CartAdapter cartAdapter;
@@ -29,9 +46,22 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
+//test-xoa sau
+        MainActivity.isAuthenticated = true;
+        MainActivity.Login.setId(1);
+        MainActivity.Login.setUsername("tuan");
+        MainActivity.Login.setEmail("1851050167tuan@ou.edu.vn");
+        MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
+                ,"https://cdn3.yame.vn/pimg/ao-thun-nam-y2010-basic-bf01-0019691/435b20ea-0323-1700-c5fe-001742e83abe.jpg?w=440",
+                "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,5,5,5,5));
+
+        MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
+                ,"https://cdn3.yame.vn/pimg/ao-khoac-du-co-non-y2010-f04-0019699/98fdfb6e-0d53-0900-0600-0017214fa534.jpg?w=440",
+                "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,2,2,2,2));
 
         mapping();
         hide();
+
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,25 +81,87 @@ public class CartActivity extends AppCompatActivity {
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                noProductAlert();
-//                checkLogin();
-//                updateDB();
-                //if success -> clear cart, reset productList
+                if(MainActivity.isAuthenticated){
+                    try {
+                        if(creatReceipt()){
+//                            MainActivity.cart.clear();
+//                            hide();
+//                            cartAdapter.notifyDataSetChanged();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //if success -> clear cart, reset productList
+                }else {
+//                    startActivity(new Intent(CartActivity.this, /*Login.class*/));
+                }
+//
             }
         });
-        MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
-                ,"https://cdn3.yame.vn/pimg/ao-thun-nam-y2010-basic-bf01-0019691/435b20ea-0323-1700-c5fe-001742e83abe.jpg?w=440",
-                "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,5,5,5,5));
 
-        MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
-                ,"https://cdn3.yame.vn/pimg/ao-khoac-du-co-non-y2010-f04-0019699/98fdfb6e-0d53-0900-0600-0017214fa534.jpg?w=440",
-                "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,2,2,2,2));
 
         cartAdapter = new CartAdapter(MainActivity.cart);
 
 
         listViewProduct.setAdapter(cartAdapter);
 
+    }
+
+
+    private int total() {
+        int total = 0;
+        for (ModelProducts products : MainActivity.cart
+             ) {
+            total+=products.totalPriceAllSize();
+        }
+        return total;
+    }
+
+    private boolean creatReceipt() throws JSONException {
+        JSONObject obj = new JSONObject().put("username", MainActivity.Login.getUsername())
+                .put("email", MainActivity.Login.getEmail())
+                .put("listProduct",mappingCartToJSon());
+        ApiInterface apiInterface;
+        apiInterface = RetrofitClient.getRetrofitClient().create(ApiInterface.class);
+        System.out.println(obj);
+        Call<Mess> call = apiInterface.creatBill(obj);
+
+        call.enqueue(new Callback<Mess>() {
+            @Override
+            public void onResponse(Call<Mess> call, Response<Mess> response) {
+                if(response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(),response.body().toString(),Toast.LENGTH_SHORT);
+                }else {
+                    int statusCode  = response.code();
+                    Mess mss = response.body();
+                    System.out.println(mss);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Mess> call, Throwable t) {
+
+            }
+        });
+
+        return true;
+    }
+
+    private JSONArray mappingCartToJSon() throws JSONException {
+        JSONArray ja = new JSONArray();
+        for (ModelProducts products : MainActivity.cart
+        ) {
+            JSONObject listP = new JSONObject();
+            listP.put( "product_id",products.getId())
+            .put("quantity_M_size", products.getQuantity_M_size())
+                    .put("quantity_L_size", products.getQuantity_L_size())
+                    .put("quantity_S_size", products.getQuantity_S_size())
+                    .put("quantity_XL_size",products.getQuantity_XL_size())
+                    .put("price",products.totalPriceAllSize());
+            ja.put(listP);
+        }
+        return ja;
     }
 
     private void noProductAlert() {
@@ -87,6 +179,7 @@ public class CartActivity extends AppCompatActivity {
             tvEmpty.setVisibility(View.INVISIBLE);
             totalText.setVisibility(View.VISIBLE);
             totalPrice.setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.totalPrice)).setText(String.valueOf(total()));
         }
     }
 

@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView productShowRV;
     AdapterProductSeller adapterProductSeller;
 
+    public static Boolean isAuthenticated = false;
+
+    public static ModelUser Login = new ModelUser();
+
     public static ArrayList<ModelProducts> cart;
     ApiInterface apiInterface;
 
