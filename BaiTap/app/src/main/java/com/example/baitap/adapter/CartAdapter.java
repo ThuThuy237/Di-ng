@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class CartAdapter extends BaseAdapter {
     ArrayList<ModelProducts> listProduct;
     ImageView imageView;
-    TextView name, price, quantityS, quantityM, quantityL, quantityXL;
+    TextView name, quantityS, quantityM, quantityL, quantityXL;
     ImageButton plushS, plushM, plushL, plushXL, minusS, minusM, minusL, minusXL;
 
     public CartAdapter(ArrayList<ModelProducts> listProduct){
@@ -45,7 +45,6 @@ public class CartAdapter extends BaseAdapter {
         } else viewProduct = convertView;
         imageView =viewProduct.findViewById(R.id.productImage);
         name = viewProduct.findViewById(R.id.nameproduct);
-        price = viewProduct.findViewById(R.id.priceproduct);
         quantityS = viewProduct.findViewById(R.id.edt_quantityProductS);
         quantityM = viewProduct.findViewById(R.id.edt_quantityProductM);
         quantityL = viewProduct.findViewById(R.id.edt_quantityProductL);
@@ -67,14 +66,11 @@ public class CartAdapter extends BaseAdapter {
         Picasso.get().load(product.getImage())
                 .into(imageView);
         name.setText(String.format("%s ", product.getName()));
-        price.setText(String.format("%s", product.getPrice()));
+        ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
         quantityS.setText(String.valueOf(product.getQuantity_S_size()));
         quantityM.setText(String.valueOf(product.getQuantity_M_size()));
         quantityL.setText(String.valueOf(product.getQuantity_L_size()));
         quantityXL.setText(String.valueOf(product.getQuantity_XL_size()));
-
-
-
 
 
 
@@ -85,6 +81,7 @@ public class CartAdapter extends BaseAdapter {
                 int quan = Integer.parseInt(((EditText)viewProduct.findViewById(R.id.edt_quantityProductS)).getText().toString());
                 ((EditText)viewProduct.findViewById(R.id.edt_quantityProductS)).setText(String.valueOf(quan+1));
                 MainActivity.cart.get(position).setQuantity_S_size(quan+1);
+                ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
             }
         });
 
@@ -95,6 +92,7 @@ public class CartAdapter extends BaseAdapter {
                 if (quan >=1){
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductS)).setText(String.valueOf(quan-1));
                     MainActivity.cart.get(position).setQuantity_S_size(quan-1);
+                    ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
                 }else{
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductS)).setText("0");
                 }
@@ -107,6 +105,7 @@ public class CartAdapter extends BaseAdapter {
                 int quan = Integer.parseInt(((EditText)viewProduct.findViewById(R.id.edt_quantityProductM)).getText().toString());
                 ((EditText)viewProduct.findViewById(R.id.edt_quantityProductM)).setText(String.valueOf(quan+1));
                 MainActivity.cart.get(position).setQuantity_M_size(quan+1);
+                ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
             }
         });
 
@@ -117,6 +116,7 @@ public class CartAdapter extends BaseAdapter {
                 if (quan >=1){
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductM)).setText(String.valueOf(quan-1));
                     MainActivity.cart.get(position).setQuantity_M_size(quan-1);
+                    ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
                 }else{
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductM)).setText("0");
                 }
@@ -129,6 +129,7 @@ public class CartAdapter extends BaseAdapter {
                 int quan = Integer.parseInt(((EditText)viewProduct.findViewById(R.id.edt_quantityProductL)).getText().toString());
                 ((EditText)viewProduct.findViewById(R.id.edt_quantityProductL)).setText(String.valueOf(quan+1));
                 MainActivity.cart.get(position).setQuantity_L_size(quan+1);
+                ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
             }
         });
 
@@ -139,6 +140,7 @@ public class CartAdapter extends BaseAdapter {
                 if (quan >=1){
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductL)).setText(String.valueOf(quan-1));
                     MainActivity.cart.get(position).setQuantity_L_size(quan-1);
+                    ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
                 }else{
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductL)).setText("0");
                 }
@@ -151,6 +153,7 @@ public class CartAdapter extends BaseAdapter {
                 int quan = Integer.parseInt(((EditText)viewProduct.findViewById(R.id.edt_quantityProductXL)).getText().toString());
                 ((EditText)viewProduct.findViewById(R.id.edt_quantityProductXL)).setText(String.valueOf(quan+1));
                 MainActivity.cart.get(position).setQuantity_XL_size(quan+1);
+                ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
             }
         });
 
@@ -161,6 +164,7 @@ public class CartAdapter extends BaseAdapter {
                 if (quan >=1){
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductXL)).setText(String.valueOf(quan-1));
                     MainActivity.cart.get(position).setQuantity_XL_size(quan-1);
+                    ((TextView)viewProduct.findViewById(R.id.priceproduct)).setText(String.format("%.0f", allPrice(product)));
                 }else{
                     ((EditText)viewProduct.findViewById(R.id.edt_quantityProductXL)).setText("0");
                 }
@@ -168,6 +172,11 @@ public class CartAdapter extends BaseAdapter {
         });
 
         return viewProduct;
+    }
+
+    private float allPrice(ModelProducts product) {
+        return product.getPrice()*(product.getQuantity_XL_size()+product.getQuantity_S_size()
+                + product.getQuantity_L_size() + product.getQuantity_M_size());
     }
 }
 

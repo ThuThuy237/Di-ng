@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.baitap.R;
 import com.example.baitap.adapter.CartAdapter;
@@ -22,7 +23,7 @@ public class CartActivity extends AppCompatActivity {
     ListView listViewProduct;
     Button btnPay, btnReset;
     ImageButton btnBack;
-    TextView tvEmpty;
+    TextView tvEmpty, totalPrice, totalText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_product);
 
         mapping();
-        tvEmpty.setVisibility(View.INVISIBLE);
+        hide();
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,9 +42,19 @@ public class CartActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                noProductAlert();
                 MainActivity.cart.clear();
-                tvEmpty.setVisibility(View.VISIBLE);
+                hide();
                 cartAdapter.notifyDataSetChanged();
+            }
+        });
+        btnPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noProductAlert();
+//                checkLogin();
+//                updateDB();
+                //if success -> clear cart, reset productList
             }
         });
         MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
@@ -52,13 +63,31 @@ public class CartActivity extends AppCompatActivity {
 
         MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
                 ,"https://cdn3.yame.vn/pimg/ao-khoac-du-co-non-y2010-f04-0019699/98fdfb6e-0d53-0900-0600-0017214fa534.jpg?w=440",
-                "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,2,5,0,0));
+                "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,2,2,2,2));
 
         cartAdapter = new CartAdapter(MainActivity.cart);
 
 
         listViewProduct.setAdapter(cartAdapter);
 
+    }
+
+    private void noProductAlert() {
+        if (MainActivity.cart.isEmpty()){
+            Toast.makeText(getApplicationContext(),"no product in cart!!!",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void hide() {
+        if (MainActivity.cart.isEmpty()){
+            tvEmpty.setVisibility(View.VISIBLE);
+            totalText.setVisibility(View.INVISIBLE);
+            totalPrice.setVisibility(View.INVISIBLE);
+        }else {
+            tvEmpty.setVisibility(View.INVISIBLE);
+            totalText.setVisibility(View.VISIBLE);
+            totalPrice.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -68,5 +97,7 @@ public class CartActivity extends AppCompatActivity {
         btnPay = findViewById(R.id.btnPay);
         btnReset = findViewById(R.id.btnReset);
         tvEmpty = findViewById(R.id.tv_Empty);
+        totalPrice = findViewById(R.id.totalPrice);
+        totalText = findViewById(R.id.totalText);
     }
 }
