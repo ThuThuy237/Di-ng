@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CartActivity extends AppCompatActivity {
     CartAdapter cartAdapter;
@@ -118,12 +119,14 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private boolean creatReceipt() throws JSONException {
-        JSONObject obj = new JSONObject().put("username", MainActivity.Login.getUsername())
-                .put("email", MainActivity.Login.getEmail())
-                .put("listProduct",mappingCartToJSon());
+//        JSONObject obj = new JSONObject().put("username", MainActivity.Login.getUsername())
+//                .put("email", MainActivity.Login.getEmail())
+//                .put("listProduct",mappingCartToJSon());
+        ModelReceipt obj = new ModelReceipt(MainActivity.Login.getUsername(),MainActivity.Login.getEmail(),
+                mappingCartIntoReceipDetail());
+        System.out.println(obj);
         ApiInterface apiInterface;
         apiInterface = RetrofitClient.getRetrofitClient().create(ApiInterface.class);
-        System.out.println(obj);
         Call<Mess> call = apiInterface.creatBill(obj);
 
         call.enqueue(new Callback<Mess>() {
@@ -133,8 +136,7 @@ public class CartActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),response.body().toString(),Toast.LENGTH_SHORT);
                 }else {
                     int statusCode  = response.code();
-                    Mess mss = response.body();
-                    System.out.println(mss);
+                    System.out.println(response.message());
                 }
 
             }
@@ -148,21 +150,33 @@ public class CartActivity extends AppCompatActivity {
         return true;
     }
 
-    private JSONArray mappingCartToJSon() throws JSONException {
-        JSONArray ja = new JSONArray();
-        for (ModelProducts products : MainActivity.cart
-        ) {
-            JSONObject listP = new JSONObject();
-            listP.put( "product_id",products.getId())
-            .put("quantity_M_size", products.getQuantity_M_size())
-                    .put("quantity_L_size", products.getQuantity_L_size())
-                    .put("quantity_S_size", products.getQuantity_S_size())
-                    .put("quantity_XL_size",products.getQuantity_XL_size())
-                    .put("price",products.totalPriceAllSize());
-            ja.put(listP);
+    private ArrayList<ModelReciptDetail> mappingCartIntoReceipDetail() {
+        ArrayList<ModelReciptDetail> listP = new ArrayList<>();
+        for (ModelProducts p: MainActivity.cart){
+            ModelReciptDetail product = new ModelReciptDetail(p.getId(),
+                    p.getQuantity_S_size(), p.getQuantity_M_size(),
+                    p.getQuantity_L_size(), p.getQuantity_XL_size(),
+                    p.totalPriceAllSize());
+            listP.add(product);
         }
-        return ja;
+        return listP;
     }
+
+//    private JSONArray mappingCartToJSon() throws JSONException {
+//        JSONArray ja = new JSONArray();
+//        for (ModelProducts products : MainActivity.cart
+//        ) {
+//            JSONObject listP = new JSONObject();
+//            listP.put( "product_id",products.getId())
+//            .put("quantity_M_size", products.getQuantity_M_size())
+//                    .put("quantity_L_size", products.getQuantity_L_size())
+//                    .put("quantity_S_size", products.getQuantity_S_size())
+//                    .put("quantity_XL_size",products.getQuantity_XL_size())
+//                    .put("price",products.totalPriceAllSize());
+//            ja.put(listP);
+//        }
+//        return ja;
+//    }
 
     private void noProductAlert() {
         if (MainActivity.cart.isEmpty()){

@@ -4,6 +4,7 @@ import com.example.baitap.model.Mess;
 import com.example.baitap.model.ModelCate;
 import com.example.baitap.model.ModelProducts;
 import com.example.baitap.model.ModelReceipt;
+import com.example.baitap.model.ModelReciptDetail;
 import com.example.baitap.model.Promotion;
 
 import org.json.JSONObject;
@@ -32,5 +33,5 @@ public interface ApiInterface {
     Call<Promotion> getPromotioById(@Path("id") int id);
 
     @POST("saleapp/create_bills")
-    Call<Mess> creatBill(@Body JSONObject receipt);
+    Call<Mess> creatBill(@Body ModelReceipt receipt);
 }

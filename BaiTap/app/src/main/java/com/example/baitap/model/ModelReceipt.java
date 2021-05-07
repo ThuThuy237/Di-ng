@@ -4,26 +4,24 @@ package com.example.baitap.model;
 import java.util.ArrayList;
 
 public class ModelReceipt {
-    private Integer id;
     private String username;
-    private String mail;
+    private String email;
     private ArrayList<ModelReciptDetail> listProduct;
 
     public ModelReceipt( String customerUsername, String email, ArrayList<ModelReciptDetail> listProduct){
         this.username = customerUsername;
-        this.mail = email;
+        this.email = email;
         this.listProduct = listProduct;
     }
 
-
-    public Integer getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "ModelReceipt{" +
+                "username='" + username + '\'' +
+                ", mail='" + email + '\'' +
+                ", listProduct=" + listProduct +
+                '}';
     }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
 
     public ArrayList<ModelReciptDetail> getListProduct() {
         return listProduct;
@@ -41,11 +39,11 @@ public class ModelReceipt {
         this.username = username;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
