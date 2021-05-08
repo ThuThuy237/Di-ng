@@ -1,7 +1,7 @@
 package com.example.baitap.model;
 
 public class ModelReciptDetail {
-    private Integer produc_id;
+    private Integer product_id;
     private Integer quantity_S_size;
     private Integer quantity_M_size;
     private Integer quantity_L_size;
@@ -9,7 +9,7 @@ public class ModelReciptDetail {
     private Float price;
 
     public ModelReciptDetail(Integer id, Integer quantity_s_size, Integer quantity_m_size, Integer quantity_l_size, Integer quantity_xl_size, Float totalPriceAllSize) {
-        this.produc_id = produc_id;
+        this.product_id = id;
         this.quantity_S_size = quantity_s_size;
         this.quantity_M_size = quantity_m_size;
         this.quantity_L_size = quantity_l_size;
@@ -20,7 +20,7 @@ public class ModelReciptDetail {
     @Override
     public String toString() {
         return "ModelReciptDetail{" +
-                "productId=" + produc_id +
+                "productId=" + product_id +
                 ", quantitySizeS=" + quantity_S_size +
                 ", quantitySizeM=" + quantity_M_size +
                 ", quantitySizeL=" + quantity_L_size +
@@ -29,12 +29,12 @@ public class ModelReciptDetail {
                 '}';
     }
 
-    public Integer getProduc_id() {
-        return produc_id;
+    public Integer getProduct_id() {
+        return product_id;
     }
 
-    public void setProduc_id(Integer produc_id) {
-        this.produc_id = produc_id;
+    public void setProduct_id(Integer product_id) {
+        this.product_id = product_id;
     }
 
     public Integer getQuantity_S_size() {
