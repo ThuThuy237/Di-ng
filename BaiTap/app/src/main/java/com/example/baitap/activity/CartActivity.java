@@ -56,7 +56,7 @@ public class CartActivity extends AppCompatActivity {
                 ,"https://cdn3.yame.vn/pimg/ao-thun-nam-y2010-basic-bf01-0019691/435b20ea-0323-1700-c5fe-001742e83abe.jpg?w=440",
                 "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,5,5,5,5));
 
-        MainActivity.cart.add(new ModelProducts(1,"áo khoác",1
+        MainActivity.cart.add(new ModelProducts(1,"áo khoác",2
                 ,"https://cdn3.yame.vn/pimg/ao-khoac-du-co-non-y2010-f04-0019699/98fdfb6e-0d53-0900-0600-0017214fa534.jpg?w=440",
                 "Áo Khoác Classic Activewear M5 Màu Xám Trắng", (float) 200000, null,2,2,2,2));
 
@@ -85,9 +85,9 @@ public class CartActivity extends AppCompatActivity {
                 if(MainActivity.isAuthenticated){
                     try {
                         if(creatReceipt()){
-//                            MainActivity.cart.clear();
-//                            hide();
-//                            cartAdapter.notifyDataSetChanged();
+                            MainActivity.cart.clear();
+                            hide();
+                            cartAdapter.notifyDataSetChanged();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -119,9 +119,6 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private boolean creatReceipt() throws JSONException {
-//        JSONObject obj = new JSONObject().put("username", MainActivity.Login.getUsername())
-//                .put("email", MainActivity.Login.getEmail())
-//                .put("listProduct",mappingCartToJSon());
         ModelReceipt obj = new ModelReceipt(MainActivity.Login.getUsername(),MainActivity.Login.getEmail(),
                 mappingCartIntoReceipDetail());
         System.out.println(obj);
@@ -133,17 +130,17 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Mess> call, Response<Mess> response) {
                 if(response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(),response.body().toString(),Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(),response.body().getMess(),Toast.LENGTH_SHORT).show();
                 }else {
                     int statusCode  = response.code();
-                    System.out.println(response.message());
+                    Toast.makeText(getApplicationContext(),response.message(),Toast.LENGTH_SHORT).show();
                 }
 
             }
 
             @Override
             public void onFailure(Call<Mess> call, Throwable t) {
-
+                Toast.makeText(getApplicationContext(),"Oh no, Have an error!!! Please try again",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -162,21 +159,6 @@ public class CartActivity extends AppCompatActivity {
         return listP;
     }
 
-//    private JSONArray mappingCartToJSon() throws JSONException {
-//        JSONArray ja = new JSONArray();
-//        for (ModelProducts products : MainActivity.cart
-//        ) {
-//            JSONObject listP = new JSONObject();
-//            listP.put( "product_id",products.getId())
-//            .put("quantity_M_size", products.getQuantity_M_size())
-//                    .put("quantity_L_size", products.getQuantity_L_size())
-//                    .put("quantity_S_size", products.getQuantity_S_size())
-//                    .put("quantity_XL_size",products.getQuantity_XL_size())
-//                    .put("price",products.totalPriceAllSize());
-//            ja.put(listP);
-//        }
-//        return ja;
-//    }
 
     private void noProductAlert() {
         if (MainActivity.cart.isEmpty()){
