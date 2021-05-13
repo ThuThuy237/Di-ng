@@ -24,4 +24,12 @@ public class ModelCate {
         this.id = id;
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "ModelCate{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
