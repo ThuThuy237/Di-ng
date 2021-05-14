@@ -3,8 +3,6 @@ package com.example.baitap.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.ColorSpace;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +13,14 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.baitap.R;
-import com.example.baitap.activity.AllCategories;
 import com.example.baitap.activity.MainActivity;
-import com.example.baitap.activity.ProductActivity;
 import com.example.baitap.api.ApiInterface;
 import com.example.baitap.api.RetrofitClient;
 import com.example.baitap.model.ModelCate;
@@ -31,7 +29,6 @@ import com.example.baitap.model.Promotion;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import retrofit2.Call;
@@ -224,6 +221,28 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
 
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ModelProducts newPrduct = modelProducts;
+                newPrduct.setQuantity_S_size(quanS);
+                newPrduct.setQuantity_M_size(quanM);
+                newPrduct.setQuantity_L_size(quanL);
+                newPrduct.setQuantity_XL_size(quanXL);
+                MainActivity.listCost.add(modelProducts.getPrice()*(quanS+quanM+quanL+quanXL));
+                if (finalCostDiscount !=0){
+                    MainActivity.listDiscount.add((float) finalCostDiscount);
+                    newPrduct.setPrice((float) costDiscount);
+                }else {
+                    MainActivity.listDiscount.add((float) finalCostPrice);
+                    newPrduct.setPrice((float) costPrice);
+                }
+                MainActivity.cart.add(newPrduct);
+                Toast.makeText(view.getContext(),"Đã thêm sản phẩm vào giỏ hàng",Toast.LENGTH_SHORT).show();
+                dialog.hide();
+            }
+        });
         incrementBtnS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,22 +276,7 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
                 }
             }
         });
-        continueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ModelProducts newPrduct = modelProducts;
-                newPrduct.setQuantity_S_size(quanS);
-                newPrduct.setQuantity_M_size(quanM);
-                newPrduct.setQuantity_L_size(quanL);
-                newPrduct.setQuantity_XL_size(quanXL);
-                ProductActivity.cart.add(newPrduct);
-                if (finalCostDiscount !=0){
-                    ProductActivity.listDiscount.add((float) finalCostDiscount);
-                }else {
-                    ProductActivity.listDiscount.add(null);
-                }
-            }
-        });
+
         incrementBtnL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,7 +286,7 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
                     finalCostDiscount = finalCostDiscount + costDiscount;
                     finalPriceTV.setText(String.format("%.0f",finalCostDiscount) + "VNĐ");
                 }
-                else if(quanL <= quantity_L_size && promotion_id == null){
+                else if(quanL <= quantity_XL_size && promotion_id == null){
                     quanL++;
                     quanL_TV.setText(String.valueOf(quanL));
                     finalCostPrice = finalCostPrice + costPrice;

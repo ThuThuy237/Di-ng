@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.baitap">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,8 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaiTap"
         android:usesCleartextTraffic="true">
-        <activity android:name=".adapter.CartAdapter"></activity>
-        <activity android:name=".activity.OrderActivity" />
+        <activity android:name=".activity.ShowCartActivity"></activity>
+        <activity android:name=".activity.MainActivity" />
         <activity
             android:name=".activity.UserProfile"
             android:windowSoftInputMode="stateHidden" />
@@ -29,7 +30,14 @@
             android:name=".activity.LoginActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.SignupActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.ChangePassActivity"
+            android:windowSoftInputMode="stateHidden"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".activity.IntroducingActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

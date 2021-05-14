@@ -1,14 +1,5 @@
 package com.example.baitap.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,6 +8,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.baitap.R;
 import com.example.baitap.adapter.AdapterProductSeller;
@@ -45,8 +41,6 @@ public class ProductActivity extends AppCompatActivity {
     ApiInterface apiInterface;
     public static Boolean isAuthenticated = false;
     public static ModelUser Login = new ModelUser();
-    public static ArrayList<ModelProducts> cart;
-    public static ArrayList<Float> listDiscount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +55,6 @@ public class ProductActivity extends AppCompatActivity {
         listProduct = new ArrayList<>();
 
 
-        if(cart!=null){
-        }
-        else
-        {
-            listDiscount = new ArrayList<>();
-            cart = new ArrayList<>();
-        }
 
         // lấy ID cate
         Intent i = getIntent();
@@ -135,35 +122,27 @@ public class ProductActivity extends AppCompatActivity {
     public void ClickMenu(View view){
         MainActivity.openDrawer(drawerLayout);
     }
-
     public void ClickLogo(View view){
         MainActivity.closeDrawer(drawerLayout);
     }
-
     public void ClickHome(View view){
         MainActivity.redirectActivity(this,MainActivity.class);
     }
-
     public void ClickProduct(View view){
         recreate();
     }
-
-    public void ClickCart(View view){
-        MainActivity.redirectActivity(this, OrderActivity.class);
-    }
-
     public void ClickUser(View view){
         MainActivity.redirectActivity(this,UserProfile.class);
     }
-    //About Us - Thieu form
+    public void ClickCart(View view){
+        MainActivity.redirectActivity(this,ShowCartActivity.class);
+    }
     public void ClickLogout(View view){
         MainActivity.redirectActivity(this,LoginActivity.class);
     }
-
     public void ClickExit(View view){
         MainActivity.logout(this);
     }
-
     @Override
     protected void onPause() {
         super.onPause();

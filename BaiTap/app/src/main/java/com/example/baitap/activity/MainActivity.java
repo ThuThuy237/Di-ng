@@ -1,7 +1,4 @@
 package com.example.baitap.activity;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -9,14 +6,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ViewFlipper;
-import com.example.baitap.R;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.baitap.R;
+import com.example.baitap.model.ModelProducts;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     ViewFlipper viewFlipper;
     DrawerLayout drawerLayout;
+    public static ArrayList<ModelProducts> cart;
 
+    public static ArrayList<Float> listDiscount;
+    public static ArrayList<Float> listCost;
 
 
     @Override
@@ -29,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
         viewFlipper.setFlipInterval(3000);
         viewFlipper.setAutoStart(true);
-
+        if(cart!=null){
+        }
+        else
+        {
+            listDiscount = new ArrayList<>();
+            listCost = new ArrayList<>();
+            cart = new ArrayList<>();
+        }
 
     }
     public void ClickMenu(View view){
@@ -58,16 +72,12 @@ public class MainActivity extends AppCompatActivity {
     public void ClickUser(View view){
         redirectActivity(this,UserProfile.class);
     }
-
-    //About Us - Thieu form
+    public void ClickCart(View view){
+        MainActivity.redirectActivity(this,ShowCartActivity.class);
+    }
     public void ClickLogout(View view){
         redirectActivity(this,LoginActivity.class);
     }
-    public void ClickCart(View view){
-        redirectActivity(this,OrderActivity.class);
-    }
-
-
     public void ClickExit(View view){
         logout(this);
     }
